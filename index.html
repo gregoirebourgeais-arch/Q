@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>ENS Qualité - Lactalis</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-title">
+      <h1>Fiche ENS Qualité / Sécurité / Environnement</h1>
+      <p>BOUVRON SQU – FE.SQU.013</p>
+    </div>
+    <button id="installButton" class="btn secondary" hidden>Installer l’application</button>
+  </header>
+
+  <main class="app-main">
+    <nav class="tabs">
+      <button class="tab-button active" data-tab="formTab">Nouvelle ENS</button>
+      <button class="tab-button" data-tab="listTab">Liste ENS</button>
+      <button class="tab-button" data-tab="settingsTab">Export / Paramètres</button>
+    </nav>
+
+    <!-- Onglet Formulaire -->
+    <section id="formTab" class="tab-content active">
+      <form id="ensForm">
+        <!-- IDENTIFICATION -->
+        <section class="section-card">
+          <h2>1. Identification</h2>
+          <div class="grid grid-2">
+            <div class="form-group">
+              <label for="dateEvenement">Date de l’évènement *</label>
+              <input type="date" id="dateEvenement" name="dateEvenement" required />
+            </div>
+            <div class="form-group">
+              <label for="heureEvenement">Heure</label>
+              <input type="time" id="heureEvenement" name="heureEvenement" />
+            </div>
+            <div class="form-group">
+              <label for="serviceEmetteur">Service émetteur *</label>
+              <input type="text" id="serviceEmetteur" name="serviceEmetteur" placeholder="Ex : Production, Qualité…" required />
+            </div>
+            <div class="form-group">
+              <label for="constatePar">Constaté par *</label>
+              <input type="text" id="constatePar" name="constatePar" required />
+            </div>
+            <div class="form-group">
+              <label>Type d’ENS *</label>
+              <div class="inline-options">
+                <label><input type="radio" name="typeEns" value="Qualité" required /> ENS Qualité</label>
+                <label><input type="radio" name="typeEns" value="Sécurité" /> ENS Sécurité</label>
+                <label><input type="radio" name="typeEns" value="Environnement / Energie" /> ENS Environnement/Energie</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="categorieCorpsEtranger">Catégorie (si corps étranger)</label>
+              <input type="text" id="categorieCorpsEtranger" name="categorieCorpsEtranger" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="nonConformiteConstatee">Non-conformité constatée *</label>
+            <textarea id="nonConformiteConstatee" name="nonConformiteConstatee" rows="3" required></textarea>
+          </div>
+
+          <div class="grid grid-2">
+            <div class="form-group">
+              <label for="defaut">Défaut *</label>
+              <input type="text" id="defaut" name="defaut" required />
+            </div>
+            <div class="form-group">
+              <label>Impact Sécurité des aliments *</label>
+              <div class="inline-options">
+                <label><input type="radio" name="impactSecurite" value="Oui" required /> Oui</label>
+                <label><input type="radio" name="impactSecurite" value="Non" /> Non</label>
+                <label><input type="radio" name="impactSecurite" value="Inconnu" /> Inconnu</label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TRAÇABILITÉ PRODUIT -->
+        <section class="section-card">
+          <h2>2. Traçabilité du produit</h2>
+          <div class="grid grid-3">
+            <div class="form-group">
+              <label for="produit">Produit</label>
+              <input type="text" id="produit" name="produit" />
+            </div>
+            <div class="form-group">
+              <label for="marque">Marque</label>
+              <input type="text" id="marque" name="marque" />
+            </div>
+            <div class="form-group">
+              <label for="ligne">Ligne</label>
+              <input type="text" id="ligne" name="ligne" />
+            </div>
+          </div>
+          <div class="grid grid-3">
+            <div class="form-group">
+              <label for="grammage">Grammage</label>
+              <input type="text" id="grammage" name="grammage" />
+            </div>
+            <div class="form-group">
+              <label for="ddm">DDM</label>
+              <input type="text" id="ddm" name="ddm" placeholder="Ex : 10/24" />
+            </div>
+            <div class="form-group">
+              <label for="quantieme">Quantième</label>
+              <input type="text" id="quantieme" name="quantieme" />
+            </div>
+          </div>
+          <div class="grid grid-3">
+            <div class="form-group">
+              <label for="lot">N° de lot</label>
+              <input type="text" id="lot" name="lot" />
+            </div>
+            <div class="form-group">
+              <label for="palette">N° de palette</label>
+              <input type="text" id="palette" name="palette" />
+            </div>
+            <div class="form-group">
+              <label for="codeSca">Code SCA / article</label>
+              <input type="text" id="codeSca" name="codeSca" />
+            </div>
+          </div>
+          <div class="grid grid-3">
+            <div class="form-group">
+              <label for="refInterne">Référence interne</label>
+              <input type="text" id="refInterne" name="refInterne" />
+            </div>
+            <div class="form-group">
+              <label for="dateProduction">Date de production</label>
+              <input type="date" id="dateProduction" name="dateProduction" />
+            </div>
+            <div class="form-group">
+              <label for="bobine">N° de bobine</label>
+              <input type="text" id="bobine" name="bobine" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="tracaAutres">Autres traçabilités (préciser)</label>
+            <input type="text" id="tracaAutres" name="tracaAutres" />
+          </div>
+        </section>
+
+        <!-- ANALYSE DES CAUSES -->
+        <section class="section-card">
+          <h2>3. Analyse des causes (5M)</h2>
+          <div class="form-group">
+            <label>Facteurs impliqués *</label>
+            <div class="inline-options wrap">
+              <label><input type="checkbox" name="facteurs" value="Main d'œuvre" /> Main d'œuvre</label>
+              <label><input type="checkbox" name="facteurs" value="Matière" /> Matière</label>
+              <label><input type="checkbox" name="facteurs" value="Matériel" /> Matériel</label>
+              <label><input type="checkbox" name="facteurs" value="Méthode" /> Méthode</label>
+              <label><input type="checkbox" name="facteurs" value="Milieu" /> Milieu</label>
+              <label><input type="checkbox" name="facteurs" value="Management" /> Management</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="causes">Causes détaillées *</label>
+            <textarea id="causes" name="causes" rows="3" required></textarea>
+          </div>
+        </section>
+
+        <!-- TRAITEMENT / CORRECTIONS -->
+        <section class="section-card">
+          <h2>4. Traitement et correction(s)</h2>
+          <div class="grid grid-2">
+            <div class="form-group">
+              <label for="dateTraitement">Date du traitement</label>
+              <input type="date" id="dateTraitement" name="dateTraitement" />
+            </div>
+            <div class="form-group">
+              <label for="etatEns">État *</label>
+              <select id="etatEns" name="etatEns" required>
+                <option value="">Choisir…</option>
+                <option value="En cours">En cours</option>
+                <option value="Clos">Clos</option>
+                <option value="En attente">En attente</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="traitement">Traitement / Correction(s)</label>
+            <textarea id="traitement" name="traitement" rows="3"></textarea>
+          </div>
+        </section>
+
+        <!-- ACTIONS CORRECTIVES (liste dynamique) -->
+        <section class="section-card">
+          <h2>5. Action(s) corrective(s)</h2>
+          <div id="actionsContainer"></div>
+          <button type="button" id="addActionButton" class="btn secondary">+ Ajouter une action</button>
+        </section>
+
+        <!-- CRITICITÉ -->
+        <section class="section-card">
+          <h2>6. Criticité</h2>
+          <div class="grid grid-3">
+            <div class="form-group">
+              <label for="gravite">Gravité</label>
+              <select id="gravite" name="gravite">
+                <option value="">-</option>
+                <option value="1">1 - Faible</option>
+                <option value="2">2 - Moyenne</option>
+                <option value="3">3 - Importante</option>
+                <option value="4">4 - Critique</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="frequence">Fréquence</label>
+              <select id="frequence" name="frequence">
+                <option value="">-</option>
+                <option value="1">1 - Rare</option>
+                <option value="2">2 - Occasionnelle</option>
+                <option value="3">3 - Fréquente</option>
+                <option value="4">4 - Très fréquente</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="detection">Détection</label>
+              <select id="detection" name="detection">
+                <option value="">-</option>
+                <option value="1">1 - Très détectable</option>
+                <option value="2">2 - Détectable</option>
+                <option value="3">3 - Peu détectable</option>
+                <option value="4">4 - Non détectable</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="evaluationCriticite">Évaluation de la criticité</label>
+            <input type="text" id="evaluationCriticite" name="evaluationCriticite" readonly />
+          </div>
+        </section>
+
+        <!-- RÉDACTION -->
+        <section class="section-card">
+          <h2>7. Rédaction</h2>
+          <div class="grid grid-2">
+            <div class="form-group">
+              <label for="dateRedaction">Date de rédaction *</label>
+              <input type="date" id="dateRedaction" name="dateRedaction" required />
+            </div>
+            <div class="form-group">
+              <label for="redacteur">Nom du rédacteur *</label>
+              <input type="text" id="redacteur" name="redacteur" required />
+            </div>
+          </div>
+          <div class="grid grid-2">
+            <div class="form-group">
+              <label for="verificateur">Vérificateur (RQ)</label>
+              <input type="text" id="verificateur" name="verificateur" placeholder="Nom / initiales" />
+            </div>
+            <div class="form-group">
+              <label for="approbateur">Approbateur (DU)</label>
+              <input type="text" id="approbateur" name="approbateur" placeholder="Nom / initiales" />
+            </div>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <button type="reset" class="btn secondary">Réinitialiser</button>
+          <button type="submit" class="btn primary">Enregistrer l’ENS</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Onglet Liste ENS -->
+    <section id="listTab" class="tab-content">
+      <div class="section-card">
+        <h2>ENS enregistrées</h2>
+        <div class="list-filters">
+          <div class="form-group">
+            <label for="filterEtat">Filtrer par état</label>
+            <select id="filterEtat">
+              <option value="">Tous</option>
+              <option value="En cours">En cours</option>
+              <option value="Clos">Clos</option>
+              <option value="En attente">En attente</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="searchText">Recherche texte</label>
+            <input type="text" id="searchText" placeholder="Produit, lot, défaut, causes…" />
+          </div>
+        </div>
+        <div id="recordsContainer" class="records-container"></div>
+      </div>
+    </section>
+
+    <!-- Onglet Export / Paramètres -->
+    <section id="settingsTab" class="tab-content">
+      <div class="section-card">
+        <h2>Export des données</h2>
+        <p>Les ENS sont stockées dans votre navigateur (localStorage).</p>
+        <div class="form-actions">
+          <button id="exportJsonButton" class="btn secondary">Exporter en JSON</button>
+          <button id="exportCsvButton" class="btn secondary">Exporter en CSV</button>
+          <button id="clearDataButton" class="btn danger">Vider toutes les ENS</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <small>Fiche de non-conformité ou d’amélioration Qualité, Sécurité, Environnement – FE.SQU.013 L/10-24</small>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+                </html>

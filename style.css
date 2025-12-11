@@ -1,0 +1,324 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f3f5fb;
+  color: #222;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: #005bff;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.app-title h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.app-title p {
+  margin: 0.1rem 0 0;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.app-main {
+  flex: 1;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0.75rem;
+}
+
+.app-footer {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  background: #e0e5f5;
+  text-align: center;
+}
+
+/* Tabs */
+
+.tabs {
+  display: flex;
+  border-radius: 999px;
+  background: #dce3ff;
+  padding: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.tab-button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.tab-button.active {
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Cards */
+
+.section-card {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.section-card h2 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Form */
+
+form {
+  margin: 0;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.5rem;
+}
+
+label {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  padding: 0.4rem 0.45rem;
+  border-radius: 0.5rem;
+  border: 1px solid #c7d2fe;
+  background: #f9fafb;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid #005bff;
+  outline-offset: 1px;
+  background: #fff;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.inline-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.8rem;
+}
+
+.inline-options.wrap {
+  gap: 0.25rem 0.75rem;
+}
+
+.inline-options input {
+  margin-right: 0.25rem;
+}
+
+/* Grids */
+
+.grid {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 800px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Buttons */
+
+.btn {
+  border-radius: 999px;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.btn.primary {
+  background: #005bff;
+  color: #fff;
+}
+
+.btn.secondary {
+  background: #e5edff;
+  color: #1d3b8f;
+}
+
+.btn.danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* Form actions */
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+/* Tabs content */
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Liste ENS */
+
+.list-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.records-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.record-card {
+  background: #f9fafb;
+  border-radius: 0.75rem;
+  padding: 0.6rem;
+  border: 1px solid #d4d4ff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.record-title {
+  font-weight: 600;
+}
+
+.record-pill {
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+}
+
+.record-pill.etat-En\ cours {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.record-pill.etat-Clos {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.record-pill.etat-En\ attente {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.record-meta {
+  font-size: 0.75rem;
+  color: #4b5563;
+}
+
+.record-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Actions dynamiques */
+
+.action-item {
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: #f9fafb;
+}
+
+.action-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.action-item-header h3 {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* Install button */
+
+#installButton[hidden] {
+  display: none;
+}

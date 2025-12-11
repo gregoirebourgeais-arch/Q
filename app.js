@@ -14,6 +14,20 @@ document.querySelectorAll(".tab-button").forEach((btn) => {
   });
 });
 
+// --- Gestion des modes (simple / complet) ---
+const modeButtons = document.querySelectorAll(".mode-button");
+function setMode(mode) {
+  document.body.setAttribute("data-mode", mode);
+  modeButtons.forEach((btn) =>
+    btn.classList.toggle("active", btn.dataset.mode === mode)
+  );
+}
+modeButtons.forEach((btn) => {
+  btn.addEventListener("click", () => setMode(btn.dataset.mode));
+});
+// mode par défaut
+setMode("simple");
+
 // --- Formulaire principal ---
 const form = document.getElementById("ensForm");
 const actionsContainer = document.getElementById("actionsContainer");
@@ -35,54 +49,31 @@ function createActionItem(initialData = {}) {
     </div>
     <div class="grid grid-3">
       <div class="form-group">
-        <label>Type</label>
-        <select name="actions[${idx}][type]">
-          <option value="Correction" ${
-            initialData.type === "Correction" ? "selected" : ""
-          }>Correction</option>
-          <option value="Action corrective" ${
-            initialData.type === "Action corrective" ? "selected" : ""
-          }>Action corrective</option>
-        </select>
+        <label>Action</label>
+        <input type="text" name="actions[${idx}][intitule]" value="${initialData.intitule || ""}" />
       </div>
       <div class="form-group">
-        <label>Responsable</label>
-        <input type="text" name="actions[${idx}][responsable]" value="${
-    initialData.responsable || ""
-  }" />
+        <label>Resp</label>
+        <input type="text" name="actions[${idx}][responsable]" value="${initialData.responsable || ""}" />
       </div>
       <div class="form-group">
-        <label>Date prévue</label>
-        <input type="date" name="actions[${idx}][datePrevue]" value="${
-    initialData.datePrevue || ""
-  }" />
+        <label>Délai (date prévue)</label>
+        <input type="date" name="actions[${idx}][datePrevue]" value="${initialData.datePrevue || ""}" />
       </div>
     </div>
     <div class="grid grid-3">
       <div class="form-group">
         <label>Date réalisée</label>
-        <input type="date" name="actions[${idx}][dateRealisee]" value="${
-    initialData.dateRealisee || ""
-  }" />
+        <input type="date" name="actions[${idx}][dateRealisee]" value="${initialData.dateRealisee || ""}" />
       </div>
       <div class="form-group">
-        <label>Effectif</label>
-        <select name="actions[${idx}][effectif]">
-          <option value="">-</option>
-          <option value="Oui" ${
-            initialData.effectif === "Oui" ? "selected" : ""
-          }>Oui</option>
-          <option value="Non" ${
-            initialData.effectif === "Non" ? "selected" : ""
-          }>Non</option>
+        <label>État</label>
+        <select name="actions[${idx}][etat]">
+          <option value="" ${!initialData.etat ? "selected" : ""}>-</option>
+          <option value="En cours" ${initialData.etat === "En cours" ? "selected" : ""}>En cours</option>
+          <option value="Clos" ${initialData.etat === "Clos" ? "selected" : ""}>Clos</option>
         </select>
       </div>
-    </div>
-    <div class="form-group">
-      <label>Description</label>
-      <textarea rows="2" name="actions[${idx}][description]">${
-    initialData.description || ""
-  }</textarea>
     </div>
   `;
 
@@ -93,10 +84,12 @@ function createActionItem(initialData = {}) {
   actionsContainer.appendChild(wrapper);
 }
 
-addActionButton.addEventListener("click", () => createActionItem());
+if (addActionButton) {
+  addActionButton.addEventListener("click", () => createActionItem());
+}
 
-// Au moins une action par défaut
-if (actionsContainer.children.length === 0) {
+// Au moins une action par défaut en mode complet (mais conteneur est advanced-only)
+if (actionsContainer && actionsContainer.children.length === 0) {
   createActionItem();
 }
 
@@ -107,21 +100,21 @@ const detectionInput = document.getElementById("detection");
 const evaluationCriticite = document.getElementById("evaluationCriticite");
 
 function updateCriticite() {
-  const g = parseInt(graviteInput.value || "0", 10);
-  const f = parseInt(frequenceInput.value || "0", 10);
-  const d = parseInt(detectionInput.value || "0", 10);
+  const g = parseInt(graviteInput?.value || "0", 10);
+  const f = parseInt(frequenceInput?.value || "0", 10);
+  const d = parseInt(detectionInput?.value || "0", 10);
 
   if (g && f && d) {
     const score = g * f * d;
     evaluationCriticite.value = `${score}`;
-  } else {
+  } else if (evaluationCriticite) {
     evaluationCriticite.value = "";
   }
 }
 
-[graviteInput, frequenceInput, detectionInput].forEach((el) =>
-  el.addEventListener("change", updateCriticite)
-);
+[graviteInput, frequenceInput, detectionInput].forEach((el) => {
+  if (el) el.addEventListener("change", updateCriticite);
+});
 
 // --- LocalStorage helpers ---
 function loadRecords() {
@@ -156,44 +149,53 @@ form.addEventListener("submit", (e) => {
     facteurs.push(cb.value);
   });
 
+  // Destinations
+  const destination = [];
+  form.querySelectorAll('input[name="destination"]:checked').forEach((cb) => {
+    destination.push(cb.value);
+  });
+
   // Actions dynamiques
   const actions = [];
-  actionsContainer
-    .querySelectorAll(".action-item")
-    .forEach((item) => {
+  if (actionsContainer) {
+    actionsContainer.querySelectorAll(".action-item").forEach((item) => {
       const index = item.dataset.index;
       const actionData = {
-        type: data.get(`actions[${index}][type]`) || "",
+        intitule: data.get(`actions[${index}][intitule]`) || "",
         responsable: data.get(`actions[${index}][responsable]`) || "",
         datePrevue: data.get(`actions[${index}][datePrevue]`) || "",
         dateRealisee: data.get(`actions[${index}][dateRealisee]`) || "",
-        effectif: data.get(`actions[${index}][effectif]`) || "",
-        description: data.get(`actions[${index}][description]`) || "",
+        etat: data.get(`actions[${index}][etat]`) || "",
       };
-      // On ne garde que si description ou responsable non vides
-      if (actionData.description || actionData.responsable) {
+      if (actionData.intitule || actionData.responsable) {
         actions.push(actionData);
       }
     });
+  }
 
   const record = {
     id: Date.now().toString(),
     createdAt: new Date().toISOString(),
 
+    // Identification
     dateEvenement: data.get("dateEvenement") || "",
     heureEvenement: data.get("heureEvenement") || "",
     serviceEmetteur: data.get("serviceEmetteur") || "",
+    serviceConcerne: data.get("serviceConcerne") || "",
     constatePar: data.get("constatePar") || "",
     typeEns: data.get("typeEns") || "",
-    categorieCorpsEtranger: data.get("categorieCorpsEtranger") || "",
-    nonConformiteConstatee: data.get("nonConformiteConstatee") || "",
+    description: data.get("description") || "",
     defaut: data.get("defaut") || "",
+    siCcpPrpo: data.get("siCcpPrpo") || "",
+    categorieCorpsEtranger: data.get("categorieCorpsEtranger") || "",
+    qteConcernee: data.get("qteConcernee") || "",
     impactSecurite: data.get("impactSecurite") || "",
 
+    // Traçabilité
     produit: data.get("produit") || "",
+    grammage: data.get("grammage") || "",
     marque: data.get("marque") || "",
     ligne: data.get("ligne") || "",
-    grammage: data.get("grammage") || "",
     ddm: data.get("ddm") || "",
     quantieme: data.get("quantieme") || "",
     lot: data.get("lot") || "",
@@ -202,26 +204,36 @@ form.addEventListener("submit", (e) => {
     refInterne: data.get("refInterne") || "",
     dateProduction: data.get("dateProduction") || "",
     bobine: data.get("bobine") || "",
+    heureTraaca: data.get("heureTraaca") || "",
     tracaAutres: data.get("tracaAutres") || "",
 
-    facteurs,
-    causes: data.get("causes") || "",
-
+    // Traitement
+    traitementProduit: data.get("traitementProduit") || "",
+    destination,
+    destinationAutres: data.get("destinationAutres") || "",
     dateTraitement: data.get("dateTraitement") || "",
-    etatEns: data.get("etatEns") || "",
-    traitement: data.get("traitement") || "",
+    nomTraitement: data.get("nomTraitement") || "",
 
+    // Analyse causes
+    causes: data.get("causes") || "",
+    facteurs,
+
+    // Corrections & actions
+    correctionsImmediates: data.get("correctionsImmediates") || "",
+    actions,
+
+    // Criticité
     gravite: data.get("gravite") || "",
     frequence: data.get("frequence") || "",
     detection: data.get("detection") || "",
     evaluationCriticite: data.get("evaluationCriticite") || "",
 
+    // État / Rédaction
+    etatEns: data.get("etatEns") || "",
     dateRedaction: data.get("dateRedaction") || "",
     redacteur: data.get("redacteur") || "",
     verificateur: data.get("verificateur") || "",
     approbateur: data.get("approbateur") || "",
-
-    actions,
   };
 
   const records = loadRecords();
@@ -231,9 +243,13 @@ form.addEventListener("submit", (e) => {
 
   alert("ENS enregistrée avec succès.");
   form.reset();
-  actionsContainer.innerHTML = "";
-  actionIndex = 0;
-  createActionItem();
+  if (actionsContainer) {
+    actionsContainer.innerHTML = "";
+    actionIndex = 0;
+    createActionItem();
+  }
+  // Remet en mode simple après enregistrement
+  setMode("simple");
 });
 
 // --- Affichage des ENS ---
@@ -249,7 +265,7 @@ function renderRecords() {
   const search = searchText.value.trim().toLowerCase();
 
   const filtered = records.filter((r) => {
-    if (etat && r.etatEns !== etat) return false;
+    if (etat && (r.etatEns || "Non défini") !== etat) return false;
 
     if (search) {
       const txt = [
@@ -258,8 +274,9 @@ function renderRecords() {
         r.ligne,
         r.lot,
         r.defaut,
-        r.nonConformiteConstatee,
+        r.description,
         r.causes,
+        r.redacteur,
       ]
         .join(" ")
         .toLowerCase();
@@ -288,14 +305,15 @@ function renderRecords() {
     const title = document.createElement("div");
     title.className = "record-title";
     const dateLabel = r.dateEvenement || r.dateRedaction || "Date ?";
-    title.textContent = `${dateLabel} – ${r.produit || "Produit ?"} – Lot ${
-      r.lot || "?"
-    }`;
+    const prod = r.produit || "Produit ?";
+    const lot = r.lot || "?";
+    title.textContent = `${dateLabel} – ${prod} – Lot ${lot}`;
 
     const pill = document.createElement("div");
-    const etatClass = r.etatEns ? `etat-${r.etatEns.replace(" ", "\\ ")}` : "";
+    const etatValeur = r.etatEns || "Non défini";
+    const etatClass = `etat-${etatValeur.replace(" ", "\\ ")}`;
     pill.className = `record-pill ${etatClass}`;
-    pill.textContent = r.etatEns || "État ?";
+    pill.textContent = etatValeur;
 
     header.appendChild(title);
     header.appendChild(pill);
@@ -306,6 +324,7 @@ function renderRecords() {
       r.typeEns ? `Type : ${r.typeEns}` : "",
       r.serviceEmetteur ? `Service : ${r.serviceEmetteur}` : "",
       r.constatePar ? `Constaté par : ${r.constatePar}` : "",
+      r.redacteur ? `Rédacteur : ${r.redacteur}` : "",
     ]
       .filter(Boolean)
       .join(" · ");
@@ -313,11 +332,15 @@ function renderRecords() {
     const body = document.createElement("div");
     body.className = "record-meta";
     const texte =
-      (r.nonConformiteConstatee || "").slice(0, 150) +
-      (r.nonConformiteConstatee && r.nonConformiteConstatee.length > 150
-        ? "…"
-        : "");
+      (r.description || "").slice(0, 150) +
+      (r.description && r.description.length > 150 ? "…" : "");
     body.textContent = texte;
+
+    const criticite = document.createElement("div");
+    criticite.className = "record-meta";
+    if (r.evaluationCriticite) {
+      criticite.textContent = `Criticité : ${r.evaluationCriticite}`;
+    }
 
     const actionsDiv = document.createElement("div");
     actionsDiv.className = "record-actions";
@@ -348,14 +371,15 @@ function renderRecords() {
     card.appendChild(header);
     card.appendChild(meta);
     card.appendChild(body);
+    if (criticite.textContent) card.appendChild(criticite);
     card.appendChild(actionsDiv);
 
     recordsContainer.appendChild(card);
   });
 }
 
-filterEtat.addEventListener("change", renderRecords);
-searchText.addEventListener("input", renderRecords);
+if (filterEtat) filterEtat.addEventListener("change", renderRecords);
+if (searchText) searchText.addEventListener("input", renderRecords);
 
 renderRecords();
 
@@ -394,30 +418,67 @@ document.getElementById("exportCsvButton").addEventListener("click", () => {
     return;
   }
 
+  // Colonnes principales en lien avec ton classeur
   const columns = [
     "dateEvenement",
     "heureEvenement",
     "serviceEmetteur",
+    "serviceConcerne",
     "constatePar",
     "typeEns",
+    "description",
+    "defaut",
+    "siCcpPrpo",
+    "categorieCorpsEtranger",
+    "qteConcernee",
+    "impactSecurite",
+
     "produit",
+    "grammage",
     "marque",
     "ligne",
+    "ddm",
+    "quantieme",
     "lot",
-    "defaut",
-    "nonConformiteConstatee",
+    "palette",
+    "codeSca",
+    "refInterne",
+    "dateProduction",
+    "bobine",
+    "heureTraaca",
+    "tracaAutres",
+
+    "traitementProduit",
+    "destination", // liste jointe
+    "destinationAutres",
+    "dateTraitement",
+    "nomTraitement",
+
     "causes",
+    "facteurs", // liste jointe
+    "correctionsImmediates",
+
+    "gravite",
+    "frequence",
+    "detection",
+    "evaluationCriticite",
+
     "etatEns",
     "dateRedaction",
     "redacteur",
-    "evaluationCriticite",
+    "verificateur",
+    "approbateur",
   ];
 
   const header = columns.join(";");
   const lines = records.map((r) =>
     columns
       .map((c) => {
-        const v = r[c] || "";
+        let v = r[c];
+        if (Array.isArray(v)) {
+          v = v.join(", ");
+        }
+        v = v || "";
         const clean = String(v).replace(/"/g, '""').replace(/\r?\n/g, " ");
         return `"${clean}"`;
       })

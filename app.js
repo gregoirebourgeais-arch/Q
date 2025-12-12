@@ -1,7 +1,7 @@
 // Clé de stockage local
 const STORAGE_KEY = "ensRecords";
 
-// --- Gestion des onglets ---
+// ----- Onglets haut niveau (Saisie / Liste / Export) -----
 document.querySelectorAll(".tab-button").forEach((btn) => {
   btn.addEventListener("click", () => {
     const tab = btn.dataset.tab;
@@ -14,28 +14,27 @@ document.querySelectorAll(".tab-button").forEach((btn) => {
   });
 });
 
-// --- Gestion des modes (simple / complet) ---
-const modeButtons = document.querySelectorAll(".mode-button");
-function setMode(mode) {
-  document.body.setAttribute("data-mode", mode);
-  modeButtons.forEach((btn) =>
-    btn.classList.toggle("active", btn.dataset.mode === mode)
-  );
-}
-modeButtons.forEach((btn) => {
-  btn.addEventListener("click", () => setMode(btn.dataset.mode));
-});
-// mode par défaut
-setMode("simple");
+// ----- Navigation verticale par catégorie -----
+const categoryLinks = document.querySelectorAll(".category-link");
+const categoryPanels = document.querySelectorAll(".category-panel");
 
-// --- Formulaire principal ---
+categoryLinks.forEach((link) => {
+  link.addEventListener("click", () => {
+    const target = link.dataset.category;
+    categoryLinks.forEach((l) => l.classList.toggle("active", l === link));
+    categoryPanels.forEach((p) =>
+      p.classList.toggle("active", p.id === target)
+    );
+  });
+});
+
+// ----- Formulaire principal -----
 const form = document.getElementById("ensForm");
 const actionsContainer = document.getElementById("actionsContainer");
 const addActionButton = document.getElementById("addActionButton");
 
 let actionIndex = 0;
 
-// Ajout d’une action corrective
 function createActionItem(initialData = {}) {
   const idx = actionIndex++;
   const wrapper = document.createElement("div");
@@ -53,11 +52,11 @@ function createActionItem(initialData = {}) {
         <input type="text" name="actions[${idx}][intitule]" value="${initialData.intitule || ""}" />
       </div>
       <div class="form-group">
-        <label>Resp</label>
+        <label>Responsable</label>
         <input type="text" name="actions[${idx}][responsable]" value="${initialData.responsable || ""}" />
       </div>
       <div class="form-group">
-        <label>Délai (date prévue)</label>
+        <label>Délai prévu</label>
         <input type="date" name="actions[${idx}][datePrevue]" value="${initialData.datePrevue || ""}" />
       </div>
     </div>
@@ -67,7 +66,7 @@ function createActionItem(initialData = {}) {
         <input type="date" name="actions[${idx}][dateRealisee]" value="${initialData.dateRealisee || ""}" />
       </div>
       <div class="form-group">
-        <label>État</label>
+        <label>État action</label>
         <select name="actions[${idx}][etat]">
           <option value="" ${!initialData.etat ? "selected" : ""}>-</option>
           <option value="En cours" ${initialData.etat === "En cours" ? "selected" : ""}>En cours</option>
@@ -88,12 +87,12 @@ if (addActionButton) {
   addActionButton.addEventListener("click", () => createActionItem());
 }
 
-// Au moins une action par défaut en mode complet (mais conteneur est advanced-only)
+// Au moins une action par défaut
 if (actionsContainer && actionsContainer.children.length === 0) {
   createActionItem();
 }
 
-// --- Criticité (calcul simple G×F×D) ---
+// ----- Criticité (G × F × D) -----
 const graviteInput = document.getElementById("gravite");
 const frequenceInput = document.getElementById("frequence");
 const detectionInput = document.getElementById("detection");
@@ -105,9 +104,8 @@ function updateCriticite() {
   const d = parseInt(detectionInput?.value || "0", 10);
 
   if (g && f && d) {
-    const score = g * f * d;
-    evaluationCriticite.value = `${score}`;
-  } else if (evaluationCriticite) {
+    evaluationCriticite.value = String(g * f * d);
+  } else {
     evaluationCriticite.value = "";
   }
 }
@@ -116,7 +114,7 @@ function updateCriticite() {
   if (el) el.addEventListener("change", updateCriticite);
 });
 
-// --- LocalStorage helpers ---
+// ----- LocalStorage helpers -----
 function loadRecords() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -132,7 +130,7 @@ function saveRecords(records) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
 }
 
-// --- Soumission du formulaire ---
+// ----- Soumission du formulaire -----
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -143,7 +141,7 @@ form.addEventListener("submit", (e) => {
 
   const data = new FormData(form);
 
-  // Facteurs (checkbox multiples)
+  // Facteurs 5M
   const facteurs = [];
   form.querySelectorAll('input[name="facteurs"]:checked').forEach((cb) => {
     facteurs.push(cb.value);
@@ -155,7 +153,7 @@ form.addEventListener("submit", (e) => {
     destination.push(cb.value);
   });
 
-  // Actions dynamiques
+  // Actions
   const actions = [];
   if (actionsContainer) {
     actionsContainer.querySelectorAll(".action-item").forEach((item) => {
@@ -191,7 +189,7 @@ form.addEventListener("submit", (e) => {
     qteConcernee: data.get("qteConcernee") || "",
     impactSecurite: data.get("impactSecurite") || "",
 
-    // Traçabilité
+    // Tracabilité
     produit: data.get("produit") || "",
     grammage: data.get("grammage") || "",
     marque: data.get("marque") || "",
@@ -207,20 +205,17 @@ form.addEventListener("submit", (e) => {
     heureTraaca: data.get("heureTraaca") || "",
     tracaAutres: data.get("tracaAutres") || "",
 
-    // Traitement
+    // Traitement PNC
     traitementProduit: data.get("traitementProduit") || "",
     destination,
     destinationAutres: data.get("destinationAutres") || "",
     dateTraitement: data.get("dateTraitement") || "",
     nomTraitement: data.get("nomTraitement") || "",
 
-    // Analyse causes
+    // Analyse
     causes: data.get("causes") || "",
     facteurs,
-
-    // Corrections & actions
     correctionsImmediates: data.get("correctionsImmediates") || "",
-    actions,
 
     // Criticité
     gravite: data.get("gravite") || "",
@@ -228,12 +223,14 @@ form.addEventListener("submit", (e) => {
     detection: data.get("detection") || "",
     evaluationCriticite: data.get("evaluationCriticite") || "",
 
-    // État / Rédaction
+    // Rédaction / Suivi
     etatEns: data.get("etatEns") || "",
     dateRedaction: data.get("dateRedaction") || "",
     redacteur: data.get("redacteur") || "",
     verificateur: data.get("verificateur") || "",
     approbateur: data.get("approbateur") || "",
+
+    actions,
   };
 
   const records = loadRecords();
@@ -242,17 +239,20 @@ form.addEventListener("submit", (e) => {
   renderRecords();
 
   alert("ENS enregistrée avec succès.");
+
   form.reset();
   if (actionsContainer) {
     actionsContainer.innerHTML = "";
     actionIndex = 0;
     createActionItem();
   }
-  // Remet en mode simple après enregistrement
-  setMode("simple");
+
+  // On revient sur la première catégorie
+  const firstCategory = document.querySelector(".category-link[data-category='cat-ident']");
+  if (firstCategory) firstCategory.click();
 });
 
-// --- Affichage des ENS ---
+// ----- Liste ENS -----
 const recordsContainer = document.getElementById("recordsContainer");
 const filterEtat = document.getElementById("filterEtat");
 const searchText = document.getElementById("searchText");
@@ -262,7 +262,7 @@ function renderRecords() {
   recordsContainer.innerHTML = "";
 
   const etat = filterEtat.value;
-  const search = searchText.value.trim().toLowerCase();
+  const search = (searchText.value || "").trim().toLowerCase();
 
   const filtered = records.filter((r) => {
     if (etat && (r.etatEns || "Non défini") !== etat) return false;
@@ -286,7 +286,7 @@ function renderRecords() {
     return true;
   });
 
-  if (filtered.length === 0) {
+  if (!filtered.length) {
     const empty = document.createElement("p");
     empty.textContent = "Aucune ENS enregistrée pour ces critères.";
     empty.style.fontSize = "0.85rem";
@@ -383,7 +383,7 @@ if (searchText) searchText.addEventListener("input", renderRecords);
 
 renderRecords();
 
-// --- Export JSON / CSV ---
+// ----- Helpers export -----
 function downloadFile(filename, content, mimeType) {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
@@ -396,29 +396,31 @@ function downloadFile(filename, content, mimeType) {
   URL.revokeObjectURL(url);
 }
 
-document
-  .getElementById("exportJsonButton")
-  .addEventListener("click", () => {
-    const records = loadRecords();
-    if (!records.length) {
-      alert("Aucune ENS à exporter.");
-      return;
-    }
-    downloadFile(
-      "ens-qualite.json",
-      JSON.stringify(records, null, 2),
-      "application/json"
-    );
-  });
+function toCsv(rows, columns) {
+  const header = columns.join(";");
+  const lines = rows.map((r) =>
+    columns
+      .map((c) => {
+        let v = r[c];
+        if (Array.isArray(v)) v = v.join(", ");
+        v = v || "";
+        const clean = String(v).replace(/"/g, '""').replace(/\r?\n/g, " ");
+        return `"${clean}"`;
+      })
+      .join(";")
+  );
+  return [header, ...lines].join("\n");
+}
 
-document.getElementById("exportCsvButton").addEventListener("click", () => {
+// ----- Export ENS (feuille principale) -----
+document.getElementById("exportEnsButton").addEventListener("click", () => {
   const records = loadRecords();
   if (!records.length) {
     alert("Aucune ENS à exporter.");
     return;
   }
 
-  // Colonnes principales en lien avec ton classeur
+  // Colonnes principales (proches de ta fiche Excel – à ajuster si besoin)
   const columns = [
     "dateEvenement",
     "heureEvenement",
@@ -449,13 +451,13 @@ document.getElementById("exportCsvButton").addEventListener("click", () => {
     "tracaAutres",
 
     "traitementProduit",
-    "destination", // liste jointe
+    "destination",
     "destinationAutres",
     "dateTraitement",
     "nomTraitement",
 
     "causes",
-    "facteurs", // liste jointe
+    "facteurs",
     "correctionsImmediates",
 
     "gravite",
@@ -470,15 +472,71 @@ document.getElementById("exportCsvButton").addEventListener("click", () => {
     "approbateur",
   ];
 
+  const csv = toCsv(records, columns);
+  downloadFile("ens_principale.csv", csv, "text/csv;charset=utf-8;");
+});
+
+// ----- Export Actions correctives (feuille dédiée) -----
+document.getElementById("exportActionsButton").addEventListener("click", () => {
+  const records = loadRecords();
+  if (!records.length) {
+    alert("Aucune ENS / action à exporter.");
+    return;
+  }
+
+  const rows = [];
+
+  records.forEach((r, idx) => {
+    const ensNumber = idx + 1; // ou utiliser r.id si tu as un numéro ENS
+    if (!Array.isArray(r.actions) || !r.actions.length) return;
+
+    r.actions.forEach((a, i) => {
+      rows.push({
+        ensNumero: ensNumber,
+        actionNumero: i + 1,
+        dateEvenement: r.dateEvenement || "",
+        produit: r.produit || "",
+        marque: r.marque || "",
+        ligne: r.ligne || "",
+        lot: r.lot || "",
+        defaut: r.defaut || "",
+        description: r.description || "",
+        actionIntitule: a.intitule || "",
+        actionResponsable: a.responsable || "",
+        actionDatePrevue: a.datePrevue || "",
+        actionDateRealisee: a.dateRealisee || "",
+        actionEtat: a.etat || "",
+      });
+    });
+  });
+
+  if (!rows.length) {
+    alert("Aucune action différée enregistrée.");
+    return;
+  }
+
+  const columns = [
+    "ensNumero",
+    "actionNumero",
+    "dateEvenement",
+    "produit",
+    "marque",
+    "ligne",
+    "lot",
+    "defaut",
+    "description",
+    "actionIntitule",
+    "actionResponsable",
+    "actionDatePrevue",
+    "actionDateRealisee",
+    "actionEtat",
+  ];
+
   const header = columns.join(";");
-  const lines = records.map((r) =>
+  const lines = rows.map((r) =>
     columns
       .map((c) => {
-        let v = r[c];
-        if (Array.isArray(v)) {
-          v = v.join(", ");
-        }
-        v = v || "";
+        let v = r[c] || "";
         const clean = String(v).replace(/"/g, '""').replace(/\r?\n/g, " ");
         return `"${clean}"`;
       })
@@ -486,9 +544,24 @@ document.getElementById("exportCsvButton").addEventListener("click", () => {
   );
 
   const csv = [header, ...lines].join("\n");
-  downloadFile("ens-qualite.csv", csv, "text/csv;charset=utf-8;");
+  downloadFile("ens_actions_correctives.csv", csv, "text/csv;charset=utf-8;");
 });
 
+// ----- Export JSON brut -----
+document.getElementById("exportJsonButton").addEventListener("click", () => {
+  const records = loadRecords();
+  if (!records.length) {
+    alert("Aucune ENS à exporter.");
+    return;
+  }
+  downloadFile(
+    "ens_qualite.json",
+    JSON.stringify(records, null, 2),
+    "application/json"
+  );
+});
+
+// ----- Clear data -----
 document.getElementById("clearDataButton").addEventListener("click", () => {
   if (
     confirm(
@@ -500,7 +573,7 @@ document.getElementById("clearDataButton").addEventListener("click", () => {
   }
 });
 
-// --- PWA : service worker + installation ---
+// ----- PWA : service worker + installation -----
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
     .register("service-worker.js")

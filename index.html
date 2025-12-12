@@ -2,12 +2,12 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>ENS Qualité - Lactalis</title>
+  <title>ENS Qualité - Lactalis Bouvron</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body data-mode="simple">
+<body>
   <header class="app-header">
     <div class="app-title">
       <h1>Fiche ENS Qualité / Sécurité / Environnement</h1>
@@ -17,320 +17,340 @@
   </header>
 
   <main class="app-main">
-    <div class="mode-switch">
-      <span class="mode-label">Mode :</span>
-      <button type="button" class="btn secondary mode-button active" data-mode="simple">
-        Saisie simple
-      </button>
-      <button type="button" class="btn secondary mode-button" data-mode="complet">
-        Mode complet (RQ / DU)
-      </button>
-    </div>
-
+    <!-- Tabs haut niveau : Saisie / Liste / Export -->
     <nav class="tabs">
-      <button class="tab-button active" data-tab="formTab">Nouvelle ENS</button>
+      <button class="tab-button active" data-tab="formTab">Saisie ENS</button>
       <button class="tab-button" data-tab="listTab">Liste ENS</button>
       <button class="tab-button" data-tab="settingsTab">Export / Paramètres</button>
     </nav>
 
-    <!-- Onglet Formulaire -->
+    <!-- Onglet SAISIE ENS -->
     <section id="formTab" class="tab-content active">
-      <form id="ensForm">
-        <!-- IDENTIFICATION -->
-        <section class="section-card">
-          <h2>1. Identification</h2>
-          <div class="grid grid-2">
-            <div class="form-group">
-              <label for="dateEvenement">Date de l’évènement* :</label>
-              <input type="date" id="dateEvenement" name="dateEvenement" required />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="heureEvenement">Heure :</label>
-              <input type="time" id="heureEvenement" name="heureEvenement" />
-            </div>
-            <div class="form-group">
-              <label for="serviceEmetteur">Service émetteur* :</label>
-              <input type="text" id="serviceEmetteur" name="serviceEmetteur" required />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="serviceConcerne">Service concerné* :</label>
-              <input type="text" id="serviceConcerne" name="serviceConcerne" />
-            </div>
-            <div class="form-group">
-              <label for="constatePar">Constaté par* :</label>
-              <input type="text" id="constatePar" name="constatePar" required />
-            </div>
-            <div class="form-group">
-              <label>Type d’ENS :</label>
-              <div class="inline-options">
-                <label><input type="radio" name="typeEns" value="ENS Qualité" /> ENS Qualité</label>
-                <label><input type="radio" name="typeEns" value="ENS Sécurité" /> ENS Sécurité</label>
-                <label><input type="radio" name="typeEns" value="ENS Environnement/Energie" /> ENS Environnement/Energie</label>
+      <div class="layout">
+        <!-- Navigation verticale par catégorie -->
+        <aside class="sidebar">
+          <h2>Catégories</h2>
+          <ul class="category-menu">
+            <li><button type="button" class="category-link active" data-category="cat-ident">1. Identification</button></li>
+            <li><button type="button" class="category-link" data-category="cat-traca">2. Traçabilité</button></li>
+            <li><button type="button" class="category-link" data-category="cat-traitement">3. Traitement PNC</button></li>
+            <li><button type="button" class="category-link" data-category="cat-analyse">4. Analyse causes (5M)</button></li>
+            <li><button type="button" class="category-link" data-category="cat-actions">5. Actions correctives</button></li>
+            <li><button type="button" class="category-link" data-category="cat-criticite">6. Criticité</button></li>
+            <li><button type="button" class="category-link" data-category="cat-redaction">7. Rédaction / Suivi</button></li>
+          </ul>
+        </aside>
+
+        <!-- Contenu catégories -->
+        <section class="content">
+          <form id="ensForm">
+            <!-- IDENTIFICATION -->
+            <section id="cat-ident" class="section-card category-panel active">
+              <h2>1. Identification</h2>
+              <div class="grid grid-2">
+                <div class="form-group">
+                  <label for="dateEvenement">Date de l’évènement* :</label>
+                  <input type="date" id="dateEvenement" name="dateEvenement" required />
+                </div>
+                <div class="form-group">
+                  <label for="heureEvenement">Heure :</label>
+                  <input type="time" id="heureEvenement" name="heureEvenement" />
+                </div>
+                <div class="form-group">
+                  <label for="serviceEmetteur">Service émetteur* :</label>
+                  <input type="text" id="serviceEmetteur" name="serviceEmetteur" required />
+                </div>
+                <div class="form-group">
+                  <label for="serviceConcerne">Service concerné* :</label>
+                  <input type="text" id="serviceConcerne" name="serviceConcerne" />
+                </div>
+                <div class="form-group">
+                  <label for="constatePar">Constaté par* :</label>
+                  <input type="text" id="constatePar" name="constatePar" required />
+                </div>
+                <div class="form-group">
+                  <label>Type d’ENS :</label>
+                  <div class="inline-options">
+                    <label><input type="radio" name="typeEns" value="ENS Qualité" /> ENS Qualité</label>
+                    <label><input type="radio" name="typeEns" value="ENS Sécurité" /> ENS Sécurité</label>
+                    <label><input type="radio" name="typeEns" value="ENS Environnement/Energie" /> ENS Environnement/Energie</label>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <div class="form-group">
-            <label for="description">Description* :</label>
-            <textarea id="description" name="description" rows="3" required></textarea>
-          </div>
-
-          <div class="grid grid-2">
-            <div class="form-group">
-              <label for="defaut">Défaut* :</label>
-              <input type="text" id="defaut" name="defaut" required />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="siCcpPrpo">Si CCP/PRPo :</label>
-              <input type="text" id="siCcpPrpo" name="siCcpPrpo" />
-            </div>
-          </div>
-
-          <div class="grid grid-3">
-            <div class="form-group advanced-only">
-              <label for="categorieCorpsEtranger">Catégorie (si corps étranger)* :</label>
-              <input type="text" id="categorieCorpsEtranger" name="categorieCorpsEtranger" />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="qteConcernee">Qté concernée :</label>
-              <input type="text" id="qteConcernee" name="qteConcernee" />
-            </div>
-            <div class="form-group">
-              <label>Impact Sécurité des aliments* :</label>
-              <div class="inline-options">
-                <label><input type="radio" name="impactSecurite" value="Oui" required /> Oui</label>
-                <label><input type="radio" name="impactSecurite" value="Non" /> Non</label>
-                <label><input type="radio" name="impactSecurite" value="Inconnu" /> Inconnu</label>
+              <div class="form-group">
+                <label for="description">Description* :</label>
+                <textarea id="description" name="description" rows="3" required></textarea>
               </div>
+
+              <div class="grid grid-2">
+                <div class="form-group">
+                  <label for="defaut">Défaut* :</label>
+                  <input type="text" id="defaut" name="defaut" required />
+                </div>
+                <div class="form-group">
+                  <label for="siCcpPrpo">Si CCP/PRPo :</label>
+                  <input type="text" id="siCcpPrpo" name="siCcpPrpo" />
+                </div>
+              </div>
+
+              <div class="grid grid-3">
+                <div class="form-group">
+                  <label for="categorieCorpsEtranger">Catégorie (si corps étranger) :</label>
+                  <select id="categorieCorpsEtranger" name="categorieCorpsEtranger">
+                    <option value="">-</option>
+                    <option value="Verre">Verre</option>
+                    <option value="Métal">Métal</option>
+                    <option value="Plastique">Plastique</option>
+                    <option value="Bois">Bois</option>
+                    <option value="Carton/Papier">Carton / Papier</option>
+                    <option value="Textile">Textile</option>
+                    <option value="Insecte">Insecte</option>
+                    <option value="Autre">Autre</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="qteConcernee">Qté concernée :</label>
+                  <input type="text" id="qteConcernee" name="qteConcernee" />
+                </div>
+                <div class="form-group">
+                  <label>Impact Sécurité des aliments* :</label>
+                  <div class="inline-options">
+                    <label><input type="radio" name="impactSecurite" value="Oui" required /> Oui</label>
+                    <label><input type="radio" name="impactSecurite" value="Non" /> Non</label>
+                    <label><input type="radio" name="impactSecurite" value="Inconnu" /> Inconnu</label>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- TRACABILITE -->
+            <section id="cat-traca" class="section-card category-panel">
+              <h2>2. Traçabilité du produit</h2>
+              <div class="grid grid-3">
+                <div class="form-group">
+                  <label for="produit">Produit :</label>
+                  <input type="text" id="produit" name="produit" />
+                </div>
+                <div class="form-group">
+                  <label for="grammage">Grammage :</label>
+                  <input type="text" id="grammage" name="grammage" />
+                </div>
+                <div class="form-group">
+                  <label for="marque">Marque :</label>
+                  <input type="text" id="marque" name="marque" />
+                </div>
+              </div>
+
+              <div class="grid grid-3">
+                <div class="form-group">
+                  <label for="ligne">Ligne :</label>
+                  <input type="text" id="ligne" name="ligne" />
+                </div>
+                <div class="form-group">
+                  <label for="ddm">DDM :</label>
+                  <input type="text" id="ddm" name="ddm" />
+                </div>
+                <div class="form-group">
+                  <label for="quantieme">Quantième :</label>
+                  <input type="text" id="quantieme" name="quantieme" />
+                </div>
+              </div>
+
+              <div class="grid grid-3">
+                <div class="form-group">
+                  <label for="lot">N° de lot :</label>
+                  <input type="text" id="lot" name="lot" />
+                </div>
+                <div class="form-group">
+                  <label for="palette">N° de palette :</label>
+                  <input type="text" id="palette" name="palette" />
+                </div>
+                <div class="form-group">
+                  <label for="codeSca">Code SCA/article :</label>
+                  <input type="text" id="codeSca" name="codeSca" />
+                </div>
+              </div>
+
+              <div class="grid grid-3">
+                <div class="form-group">
+                  <label for="refInterne">Référence interne :</label>
+                  <input type="text" id="refInterne" name="refInterne" />
+                </div>
+                <div class="form-group">
+                  <label for="dateProduction">Date de production :</label>
+                  <input type="date" id="dateProduction" name="dateProduction" />
+                </div>
+                <div class="form-group">
+                  <label for="bobine">N° de bobine :</label>
+                  <input type="text" id="bobine" name="bobine" />
+                </div>
+              </div>
+
+              <div class="grid grid-2">
+                <div class="form-group">
+                  <label for="heureTraaca">Heure :</label>
+                  <input type="time" id="heureTraaca" name="heureTraaca" />
+                </div>
+                <div class="form-group">
+                  <label for="tracaAutres">Autres traçabilités :</label>
+                  <input type="text" id="tracaAutres" name="tracaAutres" />
+                </div>
+              </div>
+            </section>
+
+            <!-- TRAITEMENT PNC -->
+            <section id="cat-traitement" class="section-card category-panel">
+              <h2>3. Traitement du produit non conforme</h2>
+              <div class="form-group">
+                <label for="traitementProduit">Traitement du produit non conforme :</label>
+                <textarea id="traitementProduit" name="traitementProduit" rows="3"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Destination / traitement :</label>
+                <div class="inline-options wrap">
+                  <label><input type="checkbox" name="destination" value="Blocage" /> Blocage en attente de décision</label>
+                  <label><input type="checkbox" name="destination" value="Méthanisation" /> Méthanisation</label>
+                  <label><input type="checkbox" name="destination" value="Fonte (Lons)" /> Fonte (Lons)</label>
+                  <label><input type="checkbox" name="destination" value="Alimentation animale" /> Alimentation animale (Biosilait)</label>
+                  <label><input type="checkbox" name="destination" value="Nouvelles analyses" /> Nouvelles analyses</label>
+                  <label><input type="checkbox" name="destination" value="Autres" /> Autres (précisez)</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="destinationAutres">Autres (destinations, précisez) :</label>
+                <input type="text" id="destinationAutres" name="destinationAutres" />
+              </div>
+              <div class="grid grid-2">
+                <div class="form-group">
+                  <label for="dateTraitement">Date du traitement :</label>
+                  <input type="date" id="dateTraitement" name="dateTraitement" />
+                </div>
+                <div class="form-group">
+                  <label for="nomTraitement">Nom :</label>
+                  <input type="text" id="nomTraitement" name="nomTraitement" />
+                </div>
+              </div>
+            </section>
+
+            <!-- ANALYSE 5M -->
+            <section id="cat-analyse" class="section-card category-panel">
+              <h2>4. Analyse des causes (5M)</h2>
+              <div class="form-group">
+                <label for="causes">Causes :</label>
+                <textarea id="causes" name="causes" rows="3"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Causes par 5M :</label>
+                <div class="inline-options wrap">
+                  <label><input type="checkbox" name="facteurs" value="Main d'œuvre" /> Main d'œuvre</label>
+                  <label><input type="checkbox" name="facteurs" value="Matériel" /> Matériel</label>
+                  <label><input type="checkbox" name="facteurs" value="Méthode" /> Méthode</label>
+                  <label><input type="checkbox" name="facteurs" value="Milieu" /> Milieu</label>
+                  <label><input type="checkbox" name="facteurs" value="Matière" /> Matière</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="correctionsImmediates">Corrections immédiates (sur le matériel, etc.) :</label>
+                <textarea id="correctionsImmediates" name="correctionsImmediates" rows="2"></textarea>
+              </div>
+            </section>
+
+            <!-- ACTIONS CORRECTIVES -->
+            <section id="cat-actions" class="section-card category-panel">
+              <h2>5. Actions correctives / différées</h2>
+              <p style="font-size: 0.8rem; margin-top: 0;">
+                Saisir ici les actions différées (une action = une ligne, exportées dans une feuille dédiée).
+              </p>
+              <div id="actionsContainer"></div>
+              <button type="button" id="addActionButton" class="btn secondary">+ Ajouter une action</button>
+            </section>
+
+            <!-- CRITICITE -->
+            <section id="cat-criticite" class="section-card category-panel">
+              <h2>6. Criticité</h2>
+              <div class="grid grid-3">
+                <div class="form-group">
+                  <label for="gravite">Gravité :</label>
+                  <select id="gravite" name="gravite">
+                    <option value="">-</option>
+                    <option value="1">1 - Mineure</option>
+                    <option value="2">2 - Modérée</option>
+                    <option value="3">3 - Majeure</option>
+                    <option value="4">4 - Critique</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="frequence">Fréquence :</label>
+                  <select id="frequence" name="frequence">
+                    <option value="">-</option>
+                    <option value="1">1 - Rare</option>
+                    <option value="2">2 - Occasionnelle</option>
+                    <option value="3">3 - Fréquente</option>
+                    <option value="4">4 - Très fréquente</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="detection">Détection :</label>
+                  <select id="detection" name="detection">
+                    <option value="">-</option>
+                    <option value="1">1 - Très détectable</option>
+                    <option value="2">2 - Détectable</option>
+                    <option value="3">3 - Peu détectable</option>
+                    <option value="4">4 - Non détectable</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="evaluationCriticite">Criticité (G × F × D) :</label>
+                <input type="text" id="evaluationCriticite" name="evaluationCriticite" readonly />
+              </div>
+            </section>
+
+            <!-- REDACTION / SUIVI -->
+            <section id="cat-redaction" class="section-card category-panel">
+              <h2>7. Rédaction / Suivi</h2>
+              <div class="grid grid-2">
+                <div class="form-group">
+                  <label for="etatEns">État ENS :</label>
+                  <select id="etatEns" name="etatEns">
+                    <option value="">Non défini</option>
+                    <option value="En cours">En cours</option>
+                    <option value="Clos">Clos</option>
+                    <option value="En attente">En attente</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="dateRedaction">Date de rédaction* :</label>
+                  <input type="date" id="dateRedaction" name="dateRedaction" required />
+                </div>
+              </div>
+              <div class="grid grid-3">
+                <div class="form-group">
+                  <label for="redacteur">Rédacteur* :</label>
+                  <input type="text" id="redacteur" name="redacteur" required />
+                </div>
+                <div class="form-group">
+                  <label for="verificateur">Vérificateur (RQ) :</label>
+                  <input type="text" id="verificateur" name="verificateur" />
+                </div>
+                <div class="form-group">
+                  <label for="approbateur">Approbateur (DU) :</label>
+                  <input type="text" id="approbateur" name="approbateur" />
+                </div>
+              </div>
+            </section>
+
+            <div class="form-actions">
+              <button type="reset" class="btn secondary">Réinitialiser</button>
+              <button type="submit" class="btn primary">Enregistrer l’ENS</button>
             </div>
-          </div>
+          </form>
         </section>
-
-        <!-- TRAÇABILITÉ DU PRODUIT -->
-        <section class="section-card">
-          <h2>2. Traçabilité du produit</h2>
-          <div class="grid grid-3">
-            <div class="form-group">
-              <label for="produit">Produit :</label>
-              <input type="text" id="produit" name="produit" />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="grammage">Grammage :</label>
-              <input type="text" id="grammage" name="grammage" />
-            </div>
-            <div class="form-group">
-              <label for="marque">Marque :</label>
-              <input type="text" id="marque" name="marque" />
-            </div>
-          </div>
-
-          <div class="grid grid-3">
-            <div class="form-group">
-              <label for="ligne">Ligne :</label>
-              <input type="text" id="ligne" name="ligne" />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="ddm">DDM :</label>
-              <input type="text" id="ddm" name="ddm" />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="quantieme">Quantième :</label>
-              <input type="text" id="quantieme" name="quantieme" />
-            </div>
-          </div>
-
-          <div class="grid grid-3">
-            <div class="form-group">
-              <label for="lot">N° de lot :</label>
-              <input type="text" id="lot" name="lot" />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="palette">N° de palette :</label>
-              <input type="text" id="palette" name="palette" />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="codeSca">Code SCA/article :</label>
-              <input type="text" id="codeSca" name="codeSca" />
-            </div>
-          </div>
-
-          <div class="grid grid-3">
-            <div class="form-group advanced-only">
-              <label for="refInterne">Référence interne :</label>
-              <input type="text" id="refInterne" name="refInterne" />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="dateProduction">Date de production :</label>
-              <input type="date" id="dateProduction" name="dateProduction" />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="bobine">N° de bobine :</label>
-              <input type="text" id="bobine" name="bobine" />
-            </div>
-          </div>
-
-          <div class="grid grid-2">
-            <div class="form-group advanced-only">
-              <label for="heureTraaca">Heure :</label>
-              <input type="time" id="heureTraaca" name="heureTraaca" />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="tracaAutres">Traçabilité autres (Autres, précisez) :</label>
-              <input type="text" id="tracaAutres" name="tracaAutres" />
-            </div>
-          </div>
-        </section>
-
-        <!-- TRAITEMENT DU PRODUIT NON-CONFORME -->
-        <section class="section-card advanced-only">
-          <h2>3. Traitement du produit non-conforme</h2>
-          <div class="form-group">
-            <label for="traitementProduit">Traitement du produit non-conforme :</label>
-            <textarea id="traitementProduit" name="traitementProduit" rows="3"></textarea>
-          </div>
-          <div class="form-group">
-            <label>Destination / traitement :</label>
-            <div class="inline-options wrap">
-              <label><input type="checkbox" name="destination" value="Blocage" /> Blocage en attente de décision</label>
-              <label><input type="checkbox" name="destination" value="Méthanisation" /> Méthanisation</label>
-              <label><input type="checkbox" name="destination" value="Fonte (Lons)" /> Fonte (Lons)</label>
-              <label><input type="checkbox" name="destination" value="Alimentation animale" /> Alimentation animale (Biosilait)</label>
-              <label><input type="checkbox" name="destination" value="Nouvelles analyses" /> Nouvelles analyses</label>
-              <label><input type="checkbox" name="destination" value="Autres" /> Autres (précisez)</label>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="destinationAutres">Autres (destinations, précisez) :</label>
-            <input type="text" id="destinationAutres" name="destinationAutres" />
-          </div>
-          <div class="grid grid-2">
-            <div class="form-group">
-              <label for="dateTraitement">Date du traitement :</label>
-              <input type="date" id="dateTraitement" name="dateTraitement" />
-            </div>
-            <div class="form-group">
-              <label for="nomTraitement">Nom :</label>
-              <input type="text" id="nomTraitement" name="nomTraitement" />
-            </div>
-          </div>
-        </section>
-
-        <!-- ANALYSE DES CAUSES -->
-        <section class="section-card advanced-only">
-          <h2>4. Analyse des causes</h2>
-          <div class="form-group">
-            <label for="causes">Causes :</label>
-            <textarea id="causes" name="causes" rows="3"></textarea>
-          </div>
-          <div class="form-group">
-            <label>Causes par 5M :</label>
-            <div class="inline-options wrap">
-              <label><input type="checkbox" name="facteurs" value="Main d'œuvre" /> Main d'œuvre*</label>
-              <label><input type="checkbox" name="facteurs" value="Matériel" /> Matériel*</label>
-              <label><input type="checkbox" name="facteurs" value="Méthode" /> Méthode*</label>
-              <label><input type="checkbox" name="facteurs" value="Milieu" /> Milieu*</label>
-              <label><input type="checkbox" name="facteurs" value="Matière" /> Matière*</label>
-            </div>
-          </div>
-        </section>
-
-        <!-- CORRECTIONS IMMÉDIATES + ACTIONS CORRECTIVES -->
-        <section class="section-card advanced-only">
-          <h2>5. Correction(s) et action(s) corrective(s)</h2>
-
-          <div class="form-group">
-            <label for="correctionsImmediates">Corrections immédiates (sur le matériel…) :</label>
-            <textarea id="correctionsImmediates" name="correctionsImmediates" rows="2"></textarea>
-          </div>
-
-          <h3>Actions diffèrées</h3>
-          <div id="actionsContainer"></div>
-          <button type="button" id="addActionButton" class="btn secondary">+ Ajouter une action</button>
-        </section>
-
-        <!-- CRITICITÉ -->
-        <section class="section-card advanced-only">
-          <h2>6. Criticité</h2>
-          <div class="grid grid-3">
-            <div class="form-group">
-              <label for="gravite">Gravité :</label>
-              <select id="gravite" name="gravite">
-                <option value="">-</option>
-                <option value="1">1 - Mineure</option>
-                <option value="2">2 - Modérée</option>
-                <option value="3">3 - Majeure</option>
-                <option value="4">4 - Critique</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="frequence">Fréquence :</label>
-              <select id="frequence" name="frequence">
-                <option value="">-</option>
-                <option value="1">1 - Rare</option>
-                <option value="2">2 - Occasionnelle</option>
-                <option value="3">3 - Fréquente</option>
-                <option value="4">4 - Très fréquente</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="detection">Détection :</label>
-              <select id="detection" name="detection">
-                <option value="">-</option>
-                <option value="1">1 - Très détectable</option>
-                <option value="2">2 - Détectable</option>
-                <option value="3">3 - Peu détectable</option>
-                <option value="4">4 - Non détectable</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="evaluationCriticite">Évaluation de la criticité (G × F × D) :</label>
-            <input type="text" id="evaluationCriticite" name="evaluationCriticite" readonly />
-          </div>
-        </section>
-
-        <!-- ÉTAT ENS + RÉDACTION -->
-        <section class="section-card">
-          <h2>7. État / Rédaction</h2>
-          <div class="grid grid-2">
-            <div class="form-group">
-              <label for="etatEns">État :</label>
-              <select id="etatEns" name="etatEns">
-                <option value="">Non défini</option>
-                <option value="En cours">En cours</option>
-                <option value="Clos">Clos</option>
-                <option value="En attente">En attente</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="dateRedaction">Date de rédaction* :</label>
-              <input type="date" id="dateRedaction" name="dateRedaction" required />
-            </div>
-          </div>
-          <div class="grid grid-3">
-            <div class="form-group">
-              <label for="redacteur">Nom du rédacteur* :</label>
-              <input type="text" id="redacteur" name="redacteur" required />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="verificateur">Vérificateur (RQ) :</label>
-              <input type="text" id="verificateur" name="verificateur" />
-            </div>
-            <div class="form-group advanced-only">
-              <label for="approbateur">Approbateur (DU) :</label>
-              <input type="text" id="approbateur" name="approbateur" />
-            </div>
-          </div>
-        </section>
-
-        <div class="form-actions">
-          <button type="reset" class="btn secondary">Réinitialiser</button>
-          <button type="submit" class="btn primary">Enregistrer l’ENS</button>
-        </div>
-      </form>
+      </div>
     </section>
 
-    <!-- Onglet Liste ENS -->
+    <!-- Onglet LISTE ENS -->
     <section id="listTab" class="tab-content">
       <div class="section-card">
         <h2>ENS enregistrées</h2>
@@ -346,7 +366,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="searchText">Recherche texte</label>
+            <label for="searchText">Recherche</label>
             <input type="text" id="searchText" placeholder="Produit, lot, défaut, causes…" />
           </div>
         </div>
@@ -354,14 +374,23 @@
       </div>
     </section>
 
-    <!-- Onglet Export / Paramètres -->
+    <!-- Onglet EXPORT -->
     <section id="settingsTab" class="tab-content">
       <div class="section-card">
         <h2>Export des données</h2>
         <p>Les ENS sont stockées dans votre navigateur (localStorage).</p>
-        <div class="form-actions">
-          <button id="exportJsonButton" class="btn secondary">Exporter en JSON</button>
-          <button id="exportCsvButton" class="btn secondary">Exporter en CSV (Excel)</button>
+
+        <h3>Exports CSV (ouvrir dans Excel)</h3>
+        <p style="font-size: 0.8rem;">
+          Ces exports sont structurés pour se rapprocher du format de ta fiche ENS :<br />
+          – <strong>ENS principale</strong> (tous les blocs 1 → 7 sur une ligne)<br />
+          – <strong>Actions différées</strong> (une ligne par action)
+        </p>
+
+        <div class="form-actions" style="flex-wrap: wrap; justify-content: flex-start;">
+          <button id="exportEnsButton" class="btn secondary">Exporter ENS (feuille principale)</button>
+          <button id="exportActionsButton" class="btn secondary">Exporter Actions correctives</button>
+          <button id="exportJsonButton" class="btn secondary">Exporter en JSON (brut)</button>
           <button id="clearDataButton" class="btn danger">Vider toutes les ENS</button>
         </div>
       </div>
